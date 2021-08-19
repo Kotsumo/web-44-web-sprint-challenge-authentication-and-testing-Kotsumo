@@ -4,7 +4,7 @@ const db = require("../data/dbConfig");
 
 // Write your tests here
 test('sanity', () => {
-  expect(true).toBe(false)
+  expect(true).toBe(true);
 })
 
 beforeAll(async () => {
@@ -26,42 +26,43 @@ describe("Auth Endpoints", () => {
   describe("[POST] /api/auth/register", () => {
     it("(1) creates a new user in database", async () => {
       const res = await request(server).post("/api/auth/register").send({
-        username: "dellis",
+        username: "dave",
         password: "123",
       });
-      expect(res.body).toMatchObject({ id: 1, username: "dellis" });
+      expect(res.body).toMatchObject({ id: 1, username: "dave" });
     });
 
     it("(2) responds with proper message if username is taken", async () => {
       const user1 = await request(server).post("/api/auth/register").send({
-        username: "dellis",
+        username: "dave",
         password: "123",
       });
-      expect(user1.body).toMatchObject({ id: 1, username: "dellis" });
+      expect(user1.body).toMatchObject({ id: 1, username: "dave" });
       const user2 = await request(server).post("/api/auth/register").send({
-        username: "dellis",
+        username: "dave",
         password: "123",
       });
       expect(user2.body.message).toMatch(/username taken/);
     });
   });
 
+  
   describe("[POST] /api/auth/login", () => {
     let res;
 
     beforeEach(async () => {
       await request(server).post("/api/auth/register").send({
-        username: "dellis",
+        username: "dave",
         password: "123",
       });
     });
 
     it("(1) logs in with correct user greeting", async () => {
       res = await request(server).post("/api/auth/login").send({
-        username: "dellis",
+        username: "dave",
         password: "123",
       });
-      expect(res.body.message).toMatch(/welcome, dellis/);
+      expect(res.body.message).toMatch(/welcome, dave/);
     });
 
     it("(2) returns correct error message if credentials[username] are incorrect", async () => {
@@ -95,7 +96,7 @@ describe("Auth Endpoints", () => {
     });
 
     it("(2) fails to send jokes with correct error message on bad token", async () => {
-      const theToken = "bard";
+      const theToken = "link";
       const res = await request(server)
         .get("/api/jokes")
         .set({ Authorization: theToken });
